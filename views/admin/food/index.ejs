@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="/admin/css/pintuer.css">
+<link rel="stylesheet" href="/admin/css/admin.css">
+<script src="/admin/js/jquery.js"></script>
+<script src="/admin/js/pintuer.js"></script>
+</head>
+<body>
+  <div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder"> 食品列表</strong> <a href="" style="float:right; display:none;">添加食品</a></div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:10px;">
+        <li> <a class="button border-main icon-plus-square-o" href="/admin/food/add">添加食品</a> </li>
+      </ul>
+    </div>
+    <table class="table table-hover text-center">
+      <tr>
+        <th width="100" style="text-align:left; padding-left:40px;">ID</th>
+        <th>食品名称</th>
+        <th>食品图片</th>
+        <th>食品价格</th>
+        <th>食品销量</th>
+        <th>食品上架/下架</th>
+        <th width="310">操作</th>
+      </tr>
+      <% data.forEach(item=>{ %>
+        <tr>
+          <td><%=item.id%></td>
+          <td><%=item.spname%></td>
+          <td>
+            <img style="width:100px;height:50px;" src="<%= item.img %>" alt="">
+          </td>
+          <td><%=item.price%></td>
+          <td><%=item.count%></td>
+          <td>
+            <% if(item.status==0){ %>
+              <a class="button border-green" href="javascript:;" onclick="status(this,<%= item.id%>,1)"></span>上架</a>
+            <% }else{ %>      
+              <a class="button border-black" href="javascript:;" onclick="status(this,<%= item.id%>,0)"></span>下架</a>
+                  <% } %>
+          </td>
+          <td>
+            <a class="button border-main" href="/admin/food/edit?id=<%= item.id %>"><span class="icon-edit"></span> 修改</a> 
+              <a class="button border-red" href="javascript:" onclick="del(this,<%= item.id %>,'<%= item.img %>')"><span class="icon-trash-o"></span>删除</a> 
+          </td>
+        </tr>
+      <% }) %>
+    </table>
+  </div>
+</body>
+<script>
+  //genggai
+  function status(obj,id,status){
+    //发送ajax请求
+        if(confirm('你确定要更改此商品状态?')){
+            $.get("/admin/food/ajax_status",{id:id,status:status},(data)=>{
+              if(data==1){
+                if(status==1){
+                  $(obj).parent().html(`
+                    <a class="button border-black" href="javascript:;" onclick="status(this,${id},0)">下架</span></a>
+                  `);
+                }else{
+                  $(obj).parent().html(`
+                    <a class="button border-green" href="javascript:;" onclick="status(this,${id},1)"></span>上架</a>
+                    `);
+                }
+              }
+            });
+        }
+  }
+  //ajax无刷新删除
+  function del(obj,id,img){
+    if(confirm('你确认要删除此商品吗!')){
+      $.get('/admin/food/ajax_del',{id:id,img:img},(data)=>{
+        if(data==1){
+          $(obj).parent().parent().remove();
+        }
+      })
+    }else{
+      return false;
+    }
+  }
+  //ajax无刷新更改顺序
+  function changeSort(id){
+    let newSort=$('#sid').val();
+    $.get('/admin/food/ajax_changeSort',{id:id,sort:newSort},(data)=>{
+      if(data==1){
+        alert('修改成功');
+      }
+    })
+  }
+</script>
+</html>
