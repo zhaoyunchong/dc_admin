@@ -1,12 +1,17 @@
 //导入express类
 let express=require('express');
-
+let pool=require("../config/pool.js");
 //实例化路由类
 let router=express.Router();
 
 //前台首页
-router.get('/',(req,res)=>{
-	res.send('我叫史志豪!');
+router.get('/food',(req,res)=>{
+	var sql="select *from dc_food";
+	pool.query(sql,(err,result)=>{
+		if(err) throw err;
+		res.send({code:1,msg:'查询成功!',data:result});
+	})
+	// res.send('我叫史志豪!');
 	// res.render('index',{title:'ahui'});
 });
 

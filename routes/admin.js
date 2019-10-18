@@ -5,8 +5,22 @@ let router=express.Router();
 
 // 后台首页
 router.get('/',(req,res)=>{
-	res.render('admin/index');
+	if(req.session.uid==undefined){
+		res.render('admin/index',{code:-1,msg:'请你先登录!'});
+	}else{
+		res.render("admin/index",{code:1,msg:'登陆成功!'});
+	}
 });
+//加载登陆界面
+router.get('/login',(req,res)=>{
+	res.render('admin/login');
+});
+
+//登陆验证
+router.get('/check',(req,res)=>{
+	res.send("登陆成功!");
+});
+
 router.get('/welcome',(req,res)=>{
 	res.render('admin/welcome');
 });
