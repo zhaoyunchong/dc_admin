@@ -15,7 +15,7 @@
   <div class="logo margin-big-left fadein-top">
     <h1><img src="/admin/images/m.jpg" class="radius-circle rotate-hover" height="50" alt="" />后台管理中心</h1>
   </div>
-  <div class="head-l"><a class="button button-little bg-green" href="/" target="_blank"><span class="icon-home"></span> 前台首页</a> &nbsp;&nbsp;<a class="button button-little bg-red" href="login.html"><span class="icon-power-off"></span> 退出登录</a> </div>
+  <div class="head-l"><a class="button button-little bg-green" href="/" target="_blank"><span class="icon-home"></span> 前台首页</a> &nbsp;&nbsp;<a class="button button-little bg-red" href="/admin/logout"><span class="icon-power-off"></span> 退出登录</a> </div>
 </div>
 <div class="leftnav">
   <div class="leftnav-title"><strong><span class="icon-list"></span>菜单列表</strong></div>
@@ -50,19 +50,27 @@ $(function(){
 		$(this).addClass("on");
   })
 });
-$.ajax({
+// xhrFields:{withCredentials:true}
+function ajax(){
+    $.ajax({
         url:'http://127.0.0.1:5050/admin/',
         datatype:'json',
         type:"get",
+        xhrFields:{withCredentials:true},
         success:function(data){
             if(<%= code %>==-1){
                 window.alert("<%= msg %>");
                 location="http://127.0.0.1:5050/admin/login";
-            }else{
-              window.alert("<%= msg %>");
             }
+            // else{
+            //   window.alert("<%= msg %>");
+            // }
         }
     });
+}
+window.onload=function(){
+  ajax();
+}
 </script>
 <div class="admin">
   <iframe scrolling="auto" rameborder="0" src="/admin/welcome" name="right" width="100%" height="100%"></iframe>

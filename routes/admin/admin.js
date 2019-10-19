@@ -13,20 +13,26 @@ const moment=require('moment');//时间的处理模块
 router.get('/',(req,res)=>{
 	//获取地址栏参数 req.query
 	//获取表单参数 req.body
-	let search=req.query.search?req.query.search:"";//三目运算符 如果为空的话则赋值为空字符串
+	console.log(req.session.uid);
+	if(req.session.uid==undefined){
+		res.send("<script>alert('请你先登录!');location.href='/admin/login';</script>");
+	}else{
+		console.log("有人进来了2!");
+		let search=req.query.search?req.query.search:"";//三目运算符 如果为空的话则赋值为空字符串
 
-	pool.query("select *from dc_admin where username like ? order by id desc",[`%${search}%`],(err,data)=>{
-		if(err) throw err;
-		if(data.length>0){
-			data.forEach(item=>{
-				//Y代表年份  MM代表月份 DD代表日份 HH代表小时  mm代表分钟 ss代表秒数
-				item.time=moment(item.time*1000).format("YYYY-MM-DD HH-mm-ss");//格式化时间
-			});
-			res.render('admin/admin/index',{data:data,search:search});
-		}else{
-			res.send("<script>alert('管理员不存在	!');history.go(-1);</script>");
-		}
-	});
+		pool.query("select *from dc_admin where username like ? order by id desc",[`%${search}%`],(err,data)=>{
+			if(err) throw err;
+			if(data.length>0){
+				data.forEach(item=>{
+					//Y代表年份  MM代表月份 DD代表日份 HH代表小时  mm代表分钟 ss代表秒数
+					item.time=moment(item.time*1000).format("YYYY-MM-DD HH-mm-ss");//格式化时间
+				});
+				res.render('admin/admin/index',{data:data,search:search});
+			}else{
+				res.send("<script>alert('管理员不存在	!');history.go(-1);</script>");
+			}
+		});
+	}
 });
 
 //管理员状态修改
