@@ -14,18 +14,38 @@ let pool=require('../../config/pool.js');
 let uploads=require('../../commen/uploads.js');
 //设置临时目录 存放上传的图片
 const upload=multer({dest:"tmp/"});
-//轮播图管理路由
+//设置食品管理路由
+//导入分页方法
+let page=require('../../commen/page.js');
 
 //首页界面
 router.get('/',(req,res,next)=>{
-	//查找数据库中的数据
-	pool.query("select *from dc_food order by id limit 5",(err,data)=>{
-		if(err){
-			return false;
-		}else{
-			console.log(data);
-			//加载页面
-			res.render('admin/food/index',{data:data});
+	//进行分页处理
+	//获取页码
+	let p=req.query.p?req.query.p:1;
+	//默认每页展示个数
+	let size=3;
+	//获取搜索框中的数据
+	let search=req.query.search?req.query.search:"";
+	//从数据库中取出数据
+	pool.query("select count(*) tot from dc_food where spname like ?",[`%${search}%`],(err,data)=>{
+		if(err) throw err;
+		if(data.length>0){
+			//获取数据总行数
+			let tot=data[0].tot;
+			let showpage=page(tot,p,size);
+			pool.query("select *from dc_food where spname like ? order by id desc limit ?,?",[`%${search}%`,showpage.start,showpage.size],(err,data)=>{
+				if(err) throw err;
+				if(data.length>0){
+					// //加载页面
+					// data.forEach(item=>{
+					// 	//格式化时间
+					// 	item.time=moment(item.time*1000).format("YYYY-MM-DD HH:mm:ss")
+					// });
+					//加载页面,将数据传送给前台
+					res.render("admin/food/index",{data:data,show:showpage.show,search:search});
+				}
+			});
 		}
 	});
 });
@@ -36,10 +56,11 @@ router.get('/add',(req,res)=>{
 	res.render("admin/food/add");
 });
 
-//添加轮播图操作
+//添加食品操作
 router.post('/add',upload.single("img"),(req,res)=>{
 	//接受前台表单传过来的东西 
-	let {name,url,sort}=req.body;
+	let {spname,price,status,typeid,details}=req.body;
+	var count=0;
 	//接受图片上传传过来
 	let imgRes=req.file;
 	//获取上传的临时文件
@@ -49,15 +70,15 @@ router.post('/add',upload.single("img"),(req,res)=>{
 	//给文件重新命名
 	let newName=""+(new Date().getTime())+Math.round(Math.random()*10000)+ext;
 	//设置文件的存放目录
-	let newPath="/upload/slider/"+newName;
+	let newPath="/images/"+newName;
 	//进行文件拷贝,同步读取数据
 	let fileData=fs.readFileSync(tmpPath);
 	//同步写入文件
 	fs.writeFileSync(__dirname+'/../../public'+newPath,fileData);
-	pool.query("insert into dc_banner(img) values (?)",[newPath],(err,result)=>{
+	pool.query("insert into dc_food(spname,price,count,typeid,status,details,img) values (?,?,?,?,?,?,?)",[spname,price,count,typeid,status,details,newPath],(err,result)=>{
 		if(err) throw err;
 		if(result.affectedRows>0){
-			res.send('<script>alert("添加成功!");location.href="/admin/slider";</script>');
+			res.send('<script>alert("添加成功!");location.href="/admin/food";</script>');
 		}else{
 			res.send('<script>alert("添加成功!");history.go(-1);</script>');
 		}
@@ -99,7 +120,7 @@ router.get('/ajax_status',(req,res)=>{
 //商品修改界面
 router.get('/edit',(req,res)=>{
 	let id=req.query.id;
-	pool.query("select *from dc_banner where id=?",[id],(err,data)=>{
+	pool.query("select *from dc_food where id=?",[id],(err,data)=>{
 		if(err){
 			return "";
 		}else{
@@ -113,15 +134,15 @@ router.post('/edit',upload.single('img'),(req,res)=>{
 	//接受图片资源
 	let imgRes=req.file;
 	//接受表单数据
-	let {id,name,url,sort,oldimg}=req.body;
+	let {id,spname,price,oldimg}=req.body;
 	console.log(oldimg);
 	let sql="";
 	let arr=[];
 	//判断图片资源是否存在,看看用户是否修改图片
 	if(imgRes){
-		let img=uploads(imgRes,"slider");
-		arr=[img,id];
-		sql="update dc_banner set img=? where id=?";
+		let img=uploads(imgRes,"../images");
+		arr=[img,spname,price,id];
+		sql="update dc_food set img=?,spname=?,price=? where id=?";
 		pool.query(sql,arr,(err,result)=>{
 			if(err) throw err;
 			if(result.affectedRows>0){
@@ -130,7 +151,7 @@ router.post('/edit',upload.single('img'),(req,res)=>{
 						fs.unlinkSync(__dirname+"/../../public"+oldimg);
 					}
 				}
-				res.send('<script>alert("修改成功!");location.href="/admin/slider";</script>');
+				res.send('<script>alert("修改成功!");location.href="/admin/food";</script>');
 			}else{
 				res.send('<script>alert("修改失败!");hostory.go(-1);</script>');
 			}

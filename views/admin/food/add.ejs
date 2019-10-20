@@ -13,40 +13,65 @@
 </head>
 <body>
 <div class="panel admin-panel">
-  <div class="panel-head"><strong><span class="icon-key"></span>添加轮播图</strong></div>
+  <div class="panel-head"><strong><span class="icon-key"></span>添加食品</strong></div>
   <div class="body-content">
-    <form method="post" enctype="multipart/form-data" class="form-x" action="/admin/slider/add">    
+    <form method="post" enctype="multipart/form-data" class="form-x" action="/admin/food/add">    
       <div class="form-group">
         <div class="label">
-          <label for="sitename">轮播图的名字：</label>
+          <label for="sitename">食品的名称：</label>
         </div>
         <div class="field">
-          <input type="text" class="input" id="mpass" name="name" size="50" placeholder="请输入轮播图的名字" data-validate="required:请输入轮播图的名字" />       
+          <input type="text" class="input" id="mpass" name="spname" size="50" placeholder="请输入食品的名字" data-validate="required:请输入食品的名称" />       
         </div>
       </div>      
       <div class="form-group">
         <div class="label">
-          <label for="sitename">轮播图的跳转地址：</label>
+          <label for="sitename">食品的价格：</label>
         </div>
         <div class="field">
-          <input type="text" class="input" name="url" size="50" placeholder="请输入轮播图的跳转地址" data-validate="required:请输入轮播图的跳转地址" />      
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="label">
-          <label for="sitename">轮播图排序：</label>
-        </div>
-        <div class="field">
-          <input type="number" class="input" name="sort" placeholder="请输入轮播图排序,数字越大越靠前" data-validate="required:请输入轮播图排序" />          
+          <input type="text" class="input" name="price" size="50" placeholder="请输入食品的价格" data-validate="required:请输入食品的价格" />      
         </div>
       </div>
 
       <div class="form-group">
         <div class="label">
-          <label for="sitename">请选择轮播图图片：</label>
+          <label for="sitename">食品详情：</label>
         </div>
         <div class="field">
-          <input type="file" class="input" name="img" data-validate="required:请选择轮播图图片" />          
+          <textarea placeholder="请在此输入对食品的描述" name="details" id="" cols="100%" rows="10" class="input" style="height:80px;resize: none;"></textarea>
+        </div> 
+      </div>
+
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename">食品类别：</label>
+        </div>
+        <div class="field">
+          <select name="typeid" id="" class="input">
+            <option value="1">小菜</option>
+            <option value="2">主食</option>
+            <option value="3">酒水</option>
+            <option value="4">甜点</option>
+          </select>
+        </div> 
+      </div>
+      
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename">食品状态：</label>
+        </div>
+        <div class="field" style="padding:8px">
+          <label for=""><input style="line-height:36px" type="radio" name="status" value="0" id="" checked>上架</label>  
+          <label for=""><input style="line-height:36px" type="radio" name="status" value="1" id="">下架</label>  
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename">请选择食品图片：</label>
+        </div>
+        <div class="field">
+          <input type="file" class="input" name="img" data-validate="required:请选择轮播图图片" />      
         </div> 
       </div>
 
