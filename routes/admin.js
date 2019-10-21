@@ -62,6 +62,13 @@ router.use('/slider',sliderRouter);
 //食品添加管理
 let foodRouter=require('./admin/food');
 router.use('/food',foodRouter);
+//系统管理
+let sysRouter=require('./admin/sys');
+router.use('/sys',sysRouter);
+
+//购物车
+let cartRouter=require('./admin/cart');
+router.use('/cart',cartRouter);
 
 //导出路由器对象
 module.exports=router;
