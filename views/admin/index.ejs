@@ -53,14 +53,14 @@ $(function(){
 // xhrFields:{withCredentials:true}
 function ajax(){
     $.ajax({
-        url:'http://127.0.0.1:5050/admin/',
+        url:'127.0.0.1:5050/admin/check',
         datatype:'json',
-        type:"get",
+        type:"post",
         xhrFields:{withCredentials:true},
         success:function(data){
             if(<%= code %>==-1){
                 window.alert("<%= msg %>");
-                location="http://127.0.0.1:5050/admin/login";
+                location="127.0.0.1:5050/admin/login";
             }
             // else{
             //   window.alert("<%= msg %>");

@@ -6,6 +6,7 @@ let router=express.Router();
 const crypto=require('crypto');
 //导入数据库文件
 var pool=require('../config/pool.js');
+
 // 后台首页
 router.get('/',(req,res)=>{
 	if(req.session.uid==undefined){
@@ -21,20 +22,23 @@ router.get('/login',(req,res)=>{
 });
 
 //登陆验证
-router.get('/check',(req,res)=>{
-	console.log(req.query.username,req.query.password);
+router.post('/check',(req,res)=>{
 	// var {username,password}={req.query.username,req.query.password};
-	var username=req.query.username;
-	var password=req.query.password;
-	var sql="select id from dc_admin where username=? and password =? ";
+	var username=req.body.username;
+	var password=req.body.password;
+	var sql="select id,status from dc_admin where username=? and password =? ";
 	let md5=crypto.createHash('md5');
 	password=md5.update(password).digest('hex');
 	pool.query(sql,[username,password],(err,result)=>{
 		if(err) throw err;
 		if(result.length>0){
-			req.session.uid=result[0].id;
-			console.log(req.session.uid);
-			res.send("<script>location.href='/admin/';</script>");
+			if(result[0].status==0){
+				req.session.uid=result[0].id;
+				console.log(req.session.uid);
+				res.send("<script>location.href='/admin/';</script>");
+			}else{
+				res.send("<script>alert('该管理员账号已被拉黑!');history.go(-1);</script>");
+			}
 		}else{
 			res.send("<script>alert('账号或者密码错误!');history.go(-1);</script>");
 

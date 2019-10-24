@@ -18,6 +18,9 @@ const upload=multer({dest:"tmp/"});
 
 //首页界面
 router.get('/',(req,res,next)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	//查找数据库中的数据
 	pool.query("select *from dc_banner order by id desc",(err,data)=>{
 		if(err){
@@ -32,6 +35,9 @@ router.get('/',(req,res,next)=>{
 
 //添加轮播图界面
 router.get('/add',(req,res)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	//加载页面
 	res.render("admin/slider/add");
 });
@@ -83,17 +89,17 @@ router.get('/ajax_del',(req,res,next)=>{
 	})
 });
 
-//ajax更改轮播图的顺序
-router.get('/ajax_changeSort',(req,res)=>{
-	let {id,sort}=req.query;
-	pool.query("update dc_banner set sort=? where id=?",[sort,id],(err,result)=>{
-		if(err){
-			return "";
-		}else{
-			res.send('1');
-		}
-	});
-})
+// //ajax更改轮播图的顺序
+// router.get('/ajax_changeSort',(req,res)=>{
+// 	let {id,sort}=req.query;
+// 	pool.query("update dc_banner set sort=? where id=?",[sort,id],(err,result)=>{
+// 		if(err){
+// 			return "";
+// 		}else{
+// 			res.send('1');
+// 		}
+// 	});
+// })
 
 //轮播图修改界面
 router.get('/edit',(req,res)=>{

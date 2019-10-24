@@ -13,6 +13,9 @@ let uploads=require('../../commen/uploads.js');
 
 //系统设置首页
 router.get('/',(req,res,next)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	//读取文件信息
 	let fileData=fs.readFileSync(__dirname+'/../../config/webConfig.json');
 	let data=JSON.parse(fileData.toString());

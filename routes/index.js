@@ -11,8 +11,6 @@ router.get('/food',(req,res)=>{
 		if(err) throw err;
 		res.send({code:1,msg:'查询成功!',data:result});
 	})
-	// res.send('我叫史志豪!');
-	// res.render('index',{title:'ahui'});
 });
 
 //前台分类页面

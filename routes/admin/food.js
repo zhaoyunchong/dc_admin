@@ -20,6 +20,9 @@ let page=require('../../commen/page.js');
 
 //首页界面
 router.get('/',(req,res,next)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	//进行分页处理
 	//获取页码
 	let p=req.query.p?req.query.p:1;
@@ -50,8 +53,11 @@ router.get('/',(req,res,next)=>{
 	});
 });
 
-//添加轮播图界面
+//添加食品界面
 router.get('/add',(req,res)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	//加载页面
 	res.render("admin/food/add");
 });
@@ -86,7 +92,7 @@ router.post('/add',upload.single("img"),(req,res)=>{
 
 });
 
-//ajax删除图片操作
+//ajax删除食品操作
 router.get('/ajax_del',(req,res,next)=>{
 	let {id,img}=req.query;
 	pool.query("delete from dc_food where id=?",[id],(err,result)=>{
@@ -104,7 +110,7 @@ router.get('/ajax_del',(req,res,next)=>{
 	})
 });
 
-//ajax更改商品的上下架
+//ajax更改食品的上下架
 router.get('/ajax_status',(req,res)=>{
 	let {id,status}=req.query;
 	pool.query("update dc_food set status=? where id=?",[status,id],(err,result)=>{
@@ -119,6 +125,9 @@ router.get('/ajax_status',(req,res)=>{
 
 //商品修改界面
 router.get('/edit',(req,res)=>{
+	if(req.session.uid==undefined){
+		res.render('admin/login',{code:-1,msg:'请你先登录!'});
+	}
 	let id=req.query.id;
 	pool.query("select *from dc_food where id=?",[id],(err,data)=>{
 		if(err){
@@ -129,7 +138,7 @@ router.get('/edit',(req,res)=>{
 	});
 });
 
-//轮播图修改操作
+//食品修改操作
 router.post('/edit',upload.single('img'),(req,res)=>{
 	//接受图片资源
 	let imgRes=req.file;
